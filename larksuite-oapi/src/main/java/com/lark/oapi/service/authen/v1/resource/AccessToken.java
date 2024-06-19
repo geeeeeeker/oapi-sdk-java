@@ -13,30 +13,22 @@
 
 package com.lark.oapi.service.authen.v1.resource;
 
-import com.lark.oapi.core.token.AccessTokenType;
+import com.lark.oapi.core.Config;
 import com.lark.oapi.core.Transport;
+import com.lark.oapi.core.request.RequestOptions;
 import com.lark.oapi.core.response.RawResponse;
-import com.lark.oapi.core.utils.UnmarshalRespUtil;
+import com.lark.oapi.core.token.AccessTokenType;
 import com.lark.oapi.core.utils.Jsons;
 import com.lark.oapi.core.utils.Sets;
+import com.lark.oapi.core.utils.UnmarshalRespUtil;
+import com.lark.oapi.service.authen.v1.model.CreateAccessTokenReq;
+import com.lark.oapi.service.authen.v1.model.CreateAccessTokenResp;
+import com.lark.oapi.service.authen.v1.model.MinaCode2SessionReq;
+import com.lark.oapi.service.authen.v1.model.MinaCode2SessionResp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
-
-import com.lark.oapi.core.Config;
-import com.lark.oapi.core.request.RequestOptions;
-
-import java.io.ByteArrayOutputStream;
-
-import com.lark.oapi.service.authen.v1.model.*;
-
-import java.io.*;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ArrayList;
 
 public class AccessToken {
     private static final Logger log = LoggerFactory.getLogger(AccessToken.class);
@@ -104,6 +96,63 @@ public class AccessToken {
                     , Jsons.DEFAULT.toJson(req), Jsons.DEFAULT.toJson(httpResponse.getHeaders()),
                     httpResponse.getStatusCode(), new String(httpResponse.getBody(),
                             StandardCharsets.UTF_8)));
+            throw new IllegalArgumentException("The result returned by the server is illegal");
+        }
+
+        resp.setRawResponse(httpResponse);
+        resp.setRequest(req);
+
+        return resp;
+    }
+
+
+    public MinaCode2SessionResp code2Session(MinaCode2SessionReq req, RequestOptions reqOptions) throws Exception {
+        // 请求参数选项
+        if (reqOptions == null) {
+            reqOptions = new RequestOptions();
+        }
+
+        // 发起请求
+        RawResponse httpResponse = Transport.send(config, reqOptions, "POST"
+          , "/open-apis/mina/v2/tokenLoginValidate"
+          , Sets.newHashSet(AccessTokenType.App)
+          , req);
+
+        // 反序列化
+        MinaCode2SessionResp resp = UnmarshalRespUtil.unmarshalResp(httpResponse, MinaCode2SessionResp.class);
+        if (resp == null) {
+            log.error(String.format(
+              "%s,callError,req=%s,respHeader=%s,respStatusCode=%s,respBody=%s,", "/open-apis/mina/v2/tokenLoginValidate"
+              , Jsons.DEFAULT.toJson(req), Jsons.DEFAULT.toJson(httpResponse.getHeaders()),
+              httpResponse.getStatusCode(), new String(httpResponse.getBody(),
+                StandardCharsets.UTF_8)));
+            throw new IllegalArgumentException("The result returned by the server is illegal");
+        }
+
+        resp.setRawResponse(httpResponse);
+        resp.setRequest(req);
+
+        return resp;
+    }
+
+    public MinaCode2SessionResp code2Session(MinaCode2SessionReq req) throws Exception {
+        // 请求参数选项
+        RequestOptions reqOptions = new RequestOptions();
+
+        // 发起请求
+        RawResponse httpResponse = Transport.send(config, reqOptions, "POST"
+          , "/open-apis/mina/v2/tokenLoginValidate"
+          , Sets.newHashSet(AccessTokenType.App)
+          , req);
+
+        // 反序列化
+        MinaCode2SessionResp resp = UnmarshalRespUtil.unmarshalResp(httpResponse, MinaCode2SessionResp.class);
+        if (resp == null) {
+            log.error(String.format(
+              "%s,callError,req=%s,respHeader=%s,respStatusCode=%s,respBody=%s,", "/open-apis/mina/v2/tokenLoginValidate"
+              , Jsons.DEFAULT.toJson(req), Jsons.DEFAULT.toJson(httpResponse.getHeaders()),
+              httpResponse.getStatusCode(), new String(httpResponse.getBody(),
+                StandardCharsets.UTF_8)));
             throw new IllegalArgumentException("The result returned by the server is illegal");
         }
 

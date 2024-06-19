@@ -19,4 +19,8 @@ public class P1UserStatusChangedV3 extends BaseEvent {
 
     @SerializedName("event")
     private P1UserStatusChangedV3Data p1UserStatusChangedV3Data;
+
+    public P1UserStatusChangedV3Data getP1UserStatusChangedV3Data() {
+        return p1UserStatusChangedV3Data;
+    }
 }
